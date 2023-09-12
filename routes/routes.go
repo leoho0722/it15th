@@ -10,10 +10,10 @@ type routerRawValue string
 
 const (
 	createAlbum    routerRawValue = "/album/create"
-	getAlbum       routerRawValue = "/album/:id"
+	getAlbum       routerRawValue = "/album"
 	getAlbums      routerRawValue = "/albums"
-	updateAlbum    routerRawValue = "/album/:id/update"
-	deleteAlbum    routerRawValue = "/album/:id/delete"
+	updateAlbum    routerRawValue = "/album/update"
+	deleteAlbum    routerRawValue = "/album/delete"
 	deleteAllAlbum routerRawValue = "/albums/delete"
 )
 
