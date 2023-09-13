@@ -1,0 +1,20 @@
+# ===== README =====
+./README.md
+
+# ===== Kubernetes =====
+./k8s
+
+# ===== Git =====
+./.gitlab-ci.yml
+./.gitignore
+
+# ===== Docker =====
+./Dockerfile
+./docker-compose.yml
+
+# ===== SQLite =====
+./db.sqlite
+
+# ===== IDE =====
+./.idea
+./.vscode

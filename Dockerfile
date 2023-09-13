@@ -1,0 +1,31 @@
+# 透過 golang:latest 這個由 Go 官方推出的 Docker Image
+# 來當作我們這個 Image 的 Base Image
+FROM golang:latest
+
+# 建立資料夾
+# -p 代表如果該資料夾尚不存在的話，則自動建立該資料夾
+RUN mkdir -p /it15th
+
+# 設定工作目錄
+WORKDIR /it15th
+
+# 將所有檔案複製到 Image 的資料夾內 (.)
+# 這邊有設定 WORKDIR (工作目錄)，所以就是會複製到工作目錄底下
+# 否則預設是複製到根目錄底下
+COPY . .
+
+# 因為我們最終是要打包成多架構的 Docker Image
+# 所以這邊我們需要設定一個 TARGETARCH 的參數
+# 在執行打包的時候傳入
+ARG TARGETARCH
+
+# Build
+# 先將 go.mod 內用到的套件下載下來
+# 接著編譯對應系統架構 (linux/amd64、linux/arm64) /it15th 底下的 go 檔案
+RUN go mod download && CGO_ENABLED=1 GOOS=linux GOARCH=${TARGETARCH} go build -o it15th
+
+#「宣告」要對外開放的 port 號
+EXPOSE 8080
+
+# 執行 docker run 時，會執行的指令
+CMD [ "./it15th" ]

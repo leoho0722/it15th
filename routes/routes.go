@@ -2,6 +2,7 @@ package routes
 
 import (
 	"it15th/controllers"
+	"it15th/network"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,7 +31,8 @@ func SetupRoute() {
 		apiRG.DELETE(string(deleteAllAlbum), controllers.DeleteAll)
 	}
 
-	err := app.Run(":8080")
+	ip := network.GetLocalNetworkIPAddress()
+	err := app.Run(ip + ":8080")
 	if err != nil {
 		panic(err)
 	}
