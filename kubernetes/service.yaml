@@ -1,0 +1,41 @@
+# Kubernetes 中 Service 元件的版本號
+apiVersion: v1
+
+# 該元件的種類
+kind: Service
+
+# 該元件的元資料
+metadata:
+  # 這個 Service 的名稱
+  name: it15th-service
+
+# 這個 Service 的 ServiceSpec
+spec:
+  # Service 要以哪種模式運作
+  # Kubernetes 提供 ClusterIP、NodePort、ExternalName、LoadBalancer
+  # 預設為 ClusterIP
+  type: NodePort
+
+  # 要選取的 Pod
+  selector:
+    app: it15th-pod
+
+  # 設定 Service 要連接的相關 port 號
+  ports:
+    - name: it15th-container
+
+      # 決定要以哪種網路協議來進行連線，TCP、UDP、SCTP
+      # 預設為 TCP
+      protocol: TCP
+
+      # Service 要用哪個 port 號來連到 Pod
+      # 通常 port 會跟 targetPort 設定為相同的 port 號
+      port: 8080
+
+      # Pod 對外開放的 port 號
+      # 沒設定 targetPort 的話，Kubernetes 預設會設為與 port 相同的 port 號
+      targetPort: 8080
+
+      # 指定外部連進 Service 的 port 號，範圍為 30000~32767
+      # 沒設定 nodePort 的話，Kubernetes 會自動指派一個範圍內的 port 號作為 nodePort
+      nodePort: 32000

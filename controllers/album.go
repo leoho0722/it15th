@@ -11,6 +11,12 @@ import (
 	"gorm.io/gorm"
 )
 
+func Root(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Welcome to Album API",
+	})
+}
+
 func Create(c *gin.Context) {
 	type param struct {
 		Title       string `json:"title"`

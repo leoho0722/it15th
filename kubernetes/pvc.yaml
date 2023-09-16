@@ -1,0 +1,27 @@
+# Kubernetes 中 PersistentVolumeClaim 元件的版本號
+apiVersion: v1
+
+# 該元件的種類
+kind: PersistentVolumeClaim
+
+# 該元件的元資料
+metadata:
+  # 這個 PersistentVolumeClaim 的名稱
+  name: it15th-pvc
+
+# 這個 PersistentVolumeClaim 的 PersistentVolumeClaimSpec
+spec:
+  # 要求的儲存空間大小
+  resources:
+    requests:
+      storage: 256Mi
+
+  # 要求的儲存空間的卷模式
+  volumeMode: Filesystem
+
+  # 要求的儲存空間的存取模式
+  accessModes:
+    - ReadWriteOnce
+
+  # 要求的儲存空間的儲存類型
+  storageClassName: it15th-pv

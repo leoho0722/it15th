@@ -10,6 +10,7 @@ import (
 type routerRawValue string
 
 const (
+	root           routerRawValue = "/"
 	createAlbum    routerRawValue = "/album/create"
 	getAlbum       routerRawValue = "/album"
 	getAlbums      routerRawValue = "/albums"
@@ -20,6 +21,8 @@ const (
 
 func SetupRoute() {
 	app := gin.Default()
+
+	app.GET(string(root), controllers.Root)
 
 	apiRG := app.Group("/api")
 	{

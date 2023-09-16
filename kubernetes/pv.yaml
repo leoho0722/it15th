@@ -1,0 +1,37 @@
+# Kubernetes 中 PersistentVolume 元件的版本號
+apiVersion: v1
+
+# 該元件的種類
+kind: PersistentVolume
+
+# 該元件的元資料
+metadata:
+  # 這個 PersistentVolume 的名稱
+  name: it15th-pv
+
+# 這個 PersistentVolume 的 PersistentVolumeSpec
+spec:
+  # 該 PersistentVolume 的容量大小
+  capacity:
+    # 該 PersistentVolume 的容量大小單位
+    storage: 1Gi
+
+  # 該 PersistentVolume 的卷模式
+  volumeMode: Filesystem
+
+  # 該 PersistentVolume 的存取模式
+  accessModes:
+    - ReadWriteOnce
+
+  # 該 PersistentVolume 的儲存類型
+  # 若不指定，則預設為 default 儲存類型
+  storageClassName: it15th-pv
+
+  # 該 PersistentVolume 位於主機上的儲存路徑
+  # 僅供單節點的 Kubernetes Cluster 使用
+  hostPath:
+    # 該 PersistentVolume 的儲存路徑
+    path: /mnt/data
+
+    # 該 PersistentVolume 的儲存路徑的類型
+    type: DirectoryOrCreate
