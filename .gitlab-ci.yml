@@ -1,0 +1,70 @@
+# Pipelines 中的所有執行階段
+stages:
+  # 編譯 Go source code
+  - build-source-code
+
+  # 透過 Docker-in-Docker 打包多架構 Docker Image
+  - build-docker-image
+
+# 編譯 Go source code
+build-code:
+  # 執行階段
+  stage: build-source-code
+
+  # 要使用的 docker image
+  image: golang:latest
+
+  # 執行 Job 前要做的事
+  before_script:
+    # 檢查 go 的版本
+    - go version
+    - export GO111MODULE=on
+    - export GIN_MODE=release
+
+    # 建立 it15th 資料夾
+    - mkdir -p ${CI_PROJECT_DIR}/
+
+  script:
+    - go build -o ${CI_PROJECT_DIR}/
+
+# 透過 Docker-in-Docker 打包 Docker Image
+build-image:
+  # 執行階段
+  stage: build-docker-image
+
+  # 宣告區域變數
+  variables:
+    # Docker Image 名稱
+    IMAGE_NAME: it15th
+
+  # 要使用的 docker image
+  image: docker:latest
+
+  # 要使用的服務
+  services:
+    - docker:dind
+
+  # 執行 Job 前要做的事
+  before_script:
+    # 查看 docker buildx 的版本
+    - docker buildx version
+
+    # 查看 docker buildx 有哪些架構可以用
+    - docker buildx inspect --bootstrap
+
+    # 登入 Docker Hub
+    - echo "$DOCKERHUB_PWD" | docker login -u $DOCKERHUB_USERNAME --password-stdin
+
+  script:
+    # 建立一個 docker buildx builder 實例
+    # 使用 docker-container driver 並使用這個 builder 實例
+    - docker buildx create --name it15thBuilder --driver docker-container --use
+
+    # 透過上面建出來的 builder 不使用快取來編譯多架構 Docker Image
+    # 預設使用 Dockerfile 來編譯
+    # 指定系統架構為 linux/amd64、linux/arm64
+    # 編譯完成後加上 latest tag 推上 Docker Hub
+    - docker buildx build --push --no-cache -t $DOCKERHUB_USERNAME/$IMAGE_NAME:latest $CI_PROJECT_DIR/ --platform linux/amd64,linux/arm64
+
+    # 上傳到 Docker Hub 後移除 it15thBuilder 這個 builder 實例
+    - docker buildx rm it15thBuilder
