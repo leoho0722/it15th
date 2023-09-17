@@ -1,0 +1,10 @@
+# Kubernetes 中 Namespace 元件的版本號
+apiVersion: v1
+
+# 該元件的種類
+kind: Namespace
+
+# 該元件的元資料
+metadata:
+  # 該元件的名稱
+  name: it15th

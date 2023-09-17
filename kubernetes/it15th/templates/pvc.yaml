@@ -7,21 +7,21 @@ kind: PersistentVolumeClaim
 # 該元件的元資料
 metadata:
   # 這個 PersistentVolumeClaim 的名稱
-  name: it15th-pvc
+  name: {{ .Values.pvc.metadata.name }}
+  namespace: {{ .Values.namespace.metadata.name }}
 
 # 這個 PersistentVolumeClaim 的 PersistentVolumeClaimSpec
 spec:
   # 要求的儲存空間大小
   resources:
     requests:
-      storage: 256Mi
+      storage: {{ .Values.pvc.spec.resources.requests.storage }}
 
   # 要求的儲存空間的卷模式
-  volumeMode: Filesystem
+  volumeMode: {{ .Values.pvc.spec.volumeMode }}
 
   # 要求的儲存空間的存取模式
-  accessModes:
-    - ReadWriteOnce
+  accessModes: {{ .Values.pvc.spec.accessModes }}
 
   # 要求的儲存空間的儲存類型
-  storageClassName: it15th-pv
+  storageClassName: {{ .Values.pvc.spec.storageClassName }}

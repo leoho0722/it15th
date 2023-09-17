@@ -1,0 +1,80 @@
+# ===== Namespace =====
+namespace:
+  metadata:
+    name: it15th
+
+# ===== Pod =====
+pod:
+  metadata:
+    labels:
+      app: it15th-pod
+  spec:
+    containers:
+      name: it15th-container
+      image: leoho0722/it15th:k8s
+      ports:
+        containerPort: 8080
+      args: ["./it15th"]
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+
+# ===== Deployment =====
+deployment:
+  metadata:
+    name: it15th-deployment
+  spec:
+    replicas: 2
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 2
+        maxUnavailable: 2
+    minReadySeconds: 60
+    revisionHistoryLimit: 10
+
+# ===== Service =====
+service:
+  metadata:
+    name: it15th-service
+  spec:
+    type: NodePort
+    ports:
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 32000
+    selector:
+      app: it15th-pod
+
+# ===== PersistentVolume =====
+pv:
+  metadata:
+    name: it15th-pv
+  spec:
+    capacity:
+      storage: 1Gi
+    volumeMode: Filesystem
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: it15th-pv
+    hostPath:
+      path: /mnt/data
+      type: DirectoryOrCreate
+
+# ===== PersistentVolumeClaim =====
+pvc:
+  metadata:
+    name: it15th-pvc
+  spec:
+    volumeMode: Filesystem
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 256Mi
+    storageClassName: it15th-pv

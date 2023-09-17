@@ -7,31 +7,31 @@ kind: PersistentVolume
 # 該元件的元資料
 metadata:
   # 這個 PersistentVolume 的名稱
-  name: it15th-pv
+  name: {{ .Values.pv.metadata.name }}
+  namespace: {{ .Values.namespace.metadata.name }}
 
 # 這個 PersistentVolume 的 PersistentVolumeSpec
 spec:
   # 該 PersistentVolume 的容量大小
   capacity:
     # 該 PersistentVolume 的容量大小單位
-    storage: 1Gi
+    storage: {{ .Values.pv.spec.capacity.storage }}
 
   # 該 PersistentVolume 的卷模式
-  volumeMode: Filesystem
+  volumeMode: {{ .Values.pv.spec.volumeMode }}
 
   # 該 PersistentVolume 的存取模式
-  accessModes:
-    - ReadWriteOnce
+  accessModes: {{ .Values.pv.spec.accessModes }}
 
   # 該 PersistentVolume 的儲存類型
   # 若不指定，則預設為 default 儲存類型
-  storageClassName: it15th-pv
+  storageClassName: {{ .Values.pv.spec.storageClassName }}
 
   # 該 PersistentVolume 位於主機上的儲存路徑
   # 僅供單節點的 Kubernetes Cluster 使用
   hostPath:
     # 該 PersistentVolume 的儲存路徑
-    path: /mnt/data
+    path: {{ .Values.pv.spec.hostPath.path }}
 
     # 該 PersistentVolume 的儲存路徑的類型
-    type: DirectoryOrCreate
+    type: {{ .Values.pv.spec.hostPath.type }}

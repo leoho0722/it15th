@@ -7,43 +7,44 @@ kind: Deployment
 # 該元件的元資料
 metadata:
   # 這個 Deployment 的名稱
-  name: it15th-deployment
+  name: {{ .Values.deployment.metadata.name }}
+  namespace: {{ .Values.namespace.metadata.name }}
 
 # 這個 Deployment 的 DeploymentSpec
 spec:
   # 要建立的 Pod 數量
   # 當現有 Pod 數量小於這邊 replica 設定的數值時，就會自動產生對應數量的 Pod 來補齊
-  replicas: 2
+  replicas: {{ .Values.deployment.spec.replicas }}
 
   # 將更新 Pod 取代舊有 Pod 的政策／策略
   strategy:
     # 這邊的 type 可以設定為 RollingUpdate 或 Recreate
     # RollingUpdate 會逐一更新 Pod，不會將所有 Pod 都停止
     # Recreate 會將所有 Pod 都停止，再重新建立新的 Pod
-    type: RollingUpdate
+    type: {{ .Values.deployment.spec.strategy.type }}
 
     # 這邊的 maxSurge 設定為 1，表示在更新 Pod 時，最多可以多出 1 個 Pod
     # 這邊的 maxUnavailable 設定為 0，表示在更新 Pod 時，最多可以少 0 個 Pod
     rollingUpdate:
       # 在 RollingUpdate 過程中，要多比 `replica` 設定的數量生幾個 Pod 出來
       # 好處是，可以降低在 RollingUpdate 過程中，舊 Pod 內容出現的機率
-      maxSurge: 2
+      maxSurge: {{ .Values.deployment.spec.strategy.rollingUpdate.maxSurge }}
 
       # 在 RollingUpdate 過程中，可以允許多少數量的 Pod 無法使用
       # 若 maxSurge 不為 0，maxUnavailable 也不得為 0
-      maxUnavailable: 2
+      maxUnavailable: {{ .Values.deployment.spec.strategy.rollingUpdate.maxUnavailable }}
 
   # 新建立出來的 Pod 如果沒有任何 Container Crash 的情形發生，
   # 應準備就緒的最小秒數，預設為 0 (即 Pod 準備就緒後就可視為可用)
-  minReadySeconds: 60
+  minReadySeconds: {{ .Values.deployment.spec.minReadySeconds }}
 
   # 要保留多少數量可以 RollBack 的舊有 ReplicaSet，預設為 10
-  revisionHistoryLimit: 10
+  revisionHistoryLimit: {{ .Values.deployment.spec.revisionHistoryLimit }}
 
   # 要選取的 Pod
   selector:
     matchLabels:
-      app: it15th-pod
+      app: {{ .Values.pod.metadata.labels.app }}
 
   # 選到的 Pod 的 PodTemplateSpec
   template:
@@ -51,44 +52,44 @@ spec:
     metadata:
       # Pod 的標籤
       labels:
-        app: it15th-pod
+        app: {{ .Values.pod.metadata.labels.app }}
 
     # 選取到的 Pod 的 PodSpec，用來定義 Pod 中的 Containers
     spec:
       # Pod 要執行的 Container
       containers:
         # 選取到的 Pod 內的 Container 名稱
-        - name: it15th-container
+        - name: {{ .Values.pod.spec.containers.name }}
 
           # 這個 Container 要用的 Image，預設從 DockerHub 取得
-          image: leoho0722/it15th:k8s
+          image: {{ .Values.pod.spec.containers.image }}
 
           # 宣告這個 Container 要對外開放的 port 類型
           ports:
             # 宣告這個 Container 要對外開放的 port 號
-            - containerPort: 8080
+            - containerPort: {{ .Values.pod.spec.containers.ports.containerPort }}
 
           # 宣告這個 Container 要執行的指令
-          args: ["./it15th"]
+          args: {{ .Values.pod.spec.containers.args }}
 
           # 宣告這個 Container 要用的資源
           resources:
             # 這個 Container 最多可以用到的資源
             limits:
-              cpu: 200m
-              memory: 256Mi
+              cpu: {{ .Values.pod.spec.containers.resources.limits.cpu }}
+              memory: {{ .Values.pod.spec.containers.resources.limits.memory }}
 
             # 這個 Container 最少要用到的資源
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: {{ .Values.pod.spec.containers.resources.requests.cpu }}
+              memory: {{ .Values.pod.spec.containers.resources.requests.memory }}
 
           # 宣告這個 Container 要用的 Volume
           volumeMounts:
-            - name: it15th-pv
-              mountPath: /mnt/data
+            - name: {{ .Values.pv.metadata.name }}
+              mountPath: {{ .Values.pv.spec.hostPath.path }}
 
       volumes:
-        - name: it15th-pv
+        - name: {{ .Values.pv.metadata.name }}
           persistentVolumeClaim:
-            claimName: it15th-pvc
+            claimName: {{ .Values.pvc.metadata.name }}
